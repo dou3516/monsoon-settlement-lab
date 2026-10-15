@@ -4,6 +4,14 @@ const M=window.MonsoonModel,$=s=>document.querySelector(s),$$=s=>Array.from(docu
 const initial={schema:'monsoon-lab-v2',scene:'settlement',active:'A',plans:M.presets(),weather:{...M.WEATHER},params:{...M.DEFAULTS},source:{type:'custom',label:'自定义情境'}};
 let state=copy(initial),results=null,revision=0,running=false,tool='select',selected='target',drag=null,history=[],toastTimer;
 const canvas=$('#mapCanvas'),ctx=canvas.getContext('2d');
+// Keep the 100 m scale tied to the rendered width of the 800 m domain.
+function syncScaleBar(){
+ const bar=$('.scale-bar>span');
+ bar.style.width=(canvas.getBoundingClientRect().width*100/M.DEFAULTS.width)+'px';
+}
+new ResizeObserver(syncScaleBar).observe(canvas);
+syncScaleBar();
+
 const weatherKeys=['temperature','humidity','windSpeed','solar','windDirection'];
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function fmt(n,d=0){return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d});}
